@@ -16,7 +16,7 @@ namespace BMP280 {
         using SPIDevice = Utility::SPIDevice;
 
         BMP280() noexcept = default;
-        BMP280(SPIDevice&& spi_device, CTRL_MEAS const ctrl_meas, CONFIG const config) noexcept;
+        BMP280(SPIDevice&& spi_device, Config const& config) noexcept;
 
         BMP280(BMP280 const& other) noexcept = delete;
         BMP280(BMP280&& other) noexcept = default;
@@ -41,7 +41,7 @@ namespace BMP280 {
         template <std::size_t SIZE>
         void write_bytes(std::uint8_t const reg_address, std::array<std::uint8_t, SIZE> const& bytes) const noexcept;
 
-        void initialize(CTRL_MEAS const ctrl_meas, CONFIG const config) noexcept;
+        void initialize(Config const& config) noexcept;
         void deinitialize() noexcept;
 
         void read_digits() noexcept;

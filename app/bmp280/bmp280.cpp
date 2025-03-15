@@ -7,10 +7,10 @@
 
 namespace BMP280 {
 
-    BMP280::BMP280(SPIDevice&& spi_device, CTRL_MEAS const ctrl_meas, CONFIG const config) noexcept :
+    BMP280::BMP280(SPIDevice&& spi_device, Config const& config) noexcept :
         spi_device_{std::forward<SPIDevice>(spi_device)}
     {
-        this->initialize(ctrl_meas, config);
+        this->initialize(config);
     }
 
     BMP280::~BMP280() noexcept
@@ -28,7 +28,7 @@ namespace BMP280 {
         while (this->get_mode() == Mode::SLEEP) {
         }
 
-        std::int32_t adc_T = std::bit_cast<std::uint16_t>(this->get_temp_registers()) >> 4;
+        std::int32_t adc_T = this->get_temp_registers().temp >> 4;
         std::int32_t var1 = ((((adc_T >> 3) - ((std::int32_t)this->t1_ << 1))) * ((std::int32_t)this->t2_)) >> 11;
         std::int32_t var2 =
             (((((adc_T >> 4) - ((std::int32_t)this->t1_)) * ((adc_T >> 4) - ((std::int32_t)this->t1_))) >> 12) *
@@ -47,7 +47,7 @@ namespace BMP280 {
 
         [[maybe_unused]] this->get_temperature();
 
-        std::int32_t adc_P = std::bit_cast<std::uint16_t>(this->get_press_registers()) >> 4;
+        std::int32_t adc_P = this->get_press_registers().press >> 4;
         std::int64_t var1 = ((int64_t)this->t_fine_) - 128000;
         std::int64_t var2 = var1 * var1 * (int64_t)this->p6_;
         var2 += ((var1 * (int64_t)this->p5_) << 17);
@@ -81,12 +81,12 @@ namespace BMP280 {
         this->spi_device_.write_byte(reg_address, byte);
     }
 
-    void BMP280::initialize(CTRL_MEAS const ctrl_meas, CONFIG const config) noexcept
+    void BMP280::initialize(Config const& config) noexcept
     {
         if (this->is_valid_device_id()) {
             this->device_reset();
-            this->set_config_register(config);
-            this->set_ctrl_meas_register(ctrl_meas);
+            this->set_config_register(config.config);
+            this->set_ctrl_meas_register(config.ctrl_meas);
             this->initialized_ = true;
         }
     }

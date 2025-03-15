@@ -54,24 +54,27 @@ namespace BMP280 {
     } packed;
 
     struct PRESS {
-        std::uint8_t press_msb : 8;
-        std::uint8_t press_lsb : 8;
+        std::uint16_t press : 16;
     } packed;
 
     struct PRESS_X {
-        std::uint8_t press_xlsb : 4;
+        std::uint8_t press_x : 4;
         std::uint8_t : 4;
     } packed;
 
     struct TEMP {
-        std::uint8_t temp_msb : 8;
-        std::uint8_t temp_lsb : 8;
+        std::uint16_t temp : 16;
     } packed;
 
     struct TEMP_X {
-        std::uint8_t temp_xlsb : 4;
+        std::uint8_t temp_x : 4;
         std::uint8_t : 4;
     } packed;
+
+    struct Config {
+        CTRL_MEAS ctrl_meas{};
+        CONFIG config{};
+    };
 
 }; // namespace BMP280
 
